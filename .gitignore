@@ -1,0 +1,38 @@
+# LaTeX auxiliary files
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.dvi
+*.fdb_latexmk
+*.fls
+*.glg
+*.glo
+*.gls
+*.glsdefs
+*.ist
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+
+# Index and glossary intermediates
+*.acn
+*.acr
+*.alg
+*.idx
+*.ilg
+*.ind
+
+/main.pdf
+/build/
+
+# Editor and operating-system files
+*.swp
+*~
+.DS_Store
+Thumbs.db

@@ -14,6 +14,13 @@
 - Perform the Chapter Context Update Check before completing substantive work and promote durable knowledge to the appropriate canonical file.
 - Do not use chapter context as a chronological task log.
 
+## Local bibliography
+
+- `references.bib` is the persistent chapter-local bibliography and source of truth for citation metadata used by this chapter; inspect it before adding citations and use it when manuscript content is created.
+- Add, update, and reuse entries non-destructively. Do not recreate, prune, broadly reformat, or rename established keys during ordinary editing; unused entries may remain.
+- Prefer stable registered-source keys (`SRC-012` -> `src012`) and use `SOURCE_REGISTER.md` plus its source records for provenance. Add only verified or explicitly marked metadata and never invent references or fields.
+- Modify only this chapter's bibliography within task scope. Final consolidation and bibliography style belong to the future thesis-assembly stage.
+
 ## Academic, LaTeX, and scope integrity
 
 - Never invent references, citations, papers, authors, DOIs, datasets, experiments, figures, results, metrics, methods, evidence, or conclusions.

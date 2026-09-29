@@ -29,6 +29,11 @@
 - Do not create or restructure manuscript content unless the approved task requires it.
 - Preserve unrelated work; do not opportunistically rewrite material or silently modify an unlisted repository.
 
+## Visual content
+
+- During manuscript drafting or revision, assess whether a figure would materially improve scientific understanding. If final material is unavailable, use the workspace-standard visible placeholder and maintain `FIGURE_PLAN.md`; never fabricate experimental visuals or results or reproduce external figures without verified rights.
+- Use the shared `visual-content-planning` skill when planning, inserting, auditing, or resolving chapter figures.
+
 ## Git and reporting
 
 - Do not commit or push unless the user explicitly authorizes it.

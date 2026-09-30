@@ -1,0 +1,472 @@
+\documentclass[12pt,a4paper]{report}
+\usepackage[margin=2.7cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{amsmath}
+\usepackage{natbib}
+\usepackage[hidelinks]{hyperref}
+
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\setlist{nosep}
+\newcommand{\figplaceholder}[2]{%
+  \fbox{\parbox[c][6.4cm][c]{0.90\textwidth}{\centering
+  \textbf{FIGURE PLACEHOLDER --- #1}\\[0.5em]#2}}}
+
+\title{Chapter 07\\Cross-Case Synthesis and Industrial Validation}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+\chapter{Cross-Case Synthesis and Industrial Validation}
+\label{ch:cross-case}
+
+\section{Purpose and scope of the cross-case synthesis}
+\label{sec:ch07-purpose}
+
+The thermal-infrared and electroluminescence (EL) studies examine different sensing processes, acquisition environments, physical structures, and inspection decisions. The thermal programme concerns unmanned aerial vehicle (UAV) inspection of operating photovoltaic (PV) plants, where radiometric information, repeated array geometry, and plant-scale spatial context shape the analysis. The EL programme concerns controlled imaging in manufacturing-oriented environments, where the repeated cell structure of a module supplies the principal spatial organization for interpreting localized defects. Their metrics, classes, and validation units are not interchangeable. Their relationship within one thesis instead arises from a common scientific problem: how localized computer-vision predictions can be combined with domain information to become dependable, structured, and traceable inspection information.
+
+This chapter answers the third specific research question:
+
+\begin{quote}
+\emph{Which methodological and workflow principles for producing dependable and traceable inspection information are shared across the thermal and electroluminescence cases, and which remain specific to their sensing and industrial contexts?}
+\end{quote}
+
+The chapter builds on the common methodological framework established in Chapter~4 and the evidence-bounded answers to SRQ1 and SRQ2 in Chapters~5 and~6. It does not repeat their complete methods or construct a numerical contest between modalities. Instead, it extracts the principles that remain meaningful when sensor physics, labels, datasets, and outputs differ. It also identifies where apparently similar workflow stages have unequal evidential support.
+
+The title treats \emph{industrial validation} as an object of analysis, not as a presupposed binary status. Validation is decomposed here into industrial data realism, component-level technical evaluation, structural and downstream evaluation, independent-domain evaluation, operational and human evaluation, and deployment evidence. This decomposition is a thesis-level analytical framework rather than a standardized industrial maturity scale. It permits the two cases to be assessed without converting applied use or industrial data origin into a claim of complete end-to-end validation.
+
+The central cross-case proposition is that localized model output is an intermediate evidence object rather than the final industrial information product. Across the two cases, the thesis-level analytical abstraction is
+\[
+\text{sensor evidence}\rightarrow\text{domain-relevant representation}\rightarrow
+\text{localized prediction}\rightarrow\text{domain or structural association}
+\rightarrow\text{interpretation or policy}\rightarrow
+\text{structured, traceable inspection output}.
+\]
+Thermal inspection realizes this chain through radiometric representation, module and row structure, and geospatial context. EL inspection realizes it through complete-module and segmented-cell representations, affected-cell relations, configurable coverage-based policy, and reporting. The value of the abstraction lies in the common functions, not in an assertion of shared software, a shared detector or dataset, a validated universal architecture, an end-to-end accuracy model, or identical validation maturity.
+
+\section{Basis and limits of comparison}
+\label{sec:ch07-comparability}
+
+\subsection{Why the cases belong in one research programme}
+
+The two cases belong in one thesis because both investigate the conversion of spatially explicit image predictions into PV inspection information. Faster R-CNN and Mask R-CNN appear in both programmes, but architectural overlap is not the principal basis of coherence. The stronger connection is that each case incorporates domain knowledge at the point where generic image-space predictions remain insufficient for the intended inspection task.
+
+In the thermal case, a detector benefits from information that is physically present in the radiometric file but not equivalent to the camera rendering. Subsequent structural stages use module masks, geometric row order, mapped plant geometry, and source-image retrieval. In the EL case, localized predictions are interpreted through the module's repeated cell structure and converted into cell-related findings, a configurable criticality policy state, and structured report fields. Both programmes therefore preserve localization while adding a domain-relevant physical address and downstream context.
+
+This coherence is compatible with methodological asymmetry. The thermal programme contains a controlled paired input experiment and two separate downstream structural studies. The EL programme contains source-reported class-level detector and cell-segmentation results plus a documented decision-and-reporting workflow whose internal association and combination rules are incomplete. Chapter~7 does not force these records into an artificial one-to-one design.
+
+\subsection{Dimensions that prevent direct performance ranking}
+
+The sensor signal differs: thermal infrared describes emitted radiance interpreted through radiometric processing, whereas EL intensity arises under electrical excitation. Acquisition differs between field UAV inspections and controlled module imaging. The source image unit, annotation unit, defect taxonomy, class prevalence, model configuration, evaluation matching, partition evidence, and downstream decision also differ. Even when both chapters report precision, recall, and F1-score, the quantities are conditional on non-equivalent tasks and protocols.
+
+Consequently, statements such as ``thermal performed better than EL'' or ``EL was more robust'' would be unsupported. A higher displayed value can reflect a different class, operating point, annotation unit, matching rule, or evaluation sample. Numerical results are retained because they establish case-specific evidence, but cross-case comparison is qualitative and stage-based. The relevant questions are what was measured, at which stage, under which independence claim, and what downstream claim that measurement can support.
+
+\subsection{Evidence base}
+
+The primary cross-case evidence is the final thesis account in Chapters~4--6. The thermal programme is documented by the earlier detector record, the published temperature-aware detector comparison, the open-string study, and the geospatial-traceability manuscript \citep{src001,src003,src004,src005}. The EL programme is documented by the conference-format manufacturing-inspection manuscript \citep{src002}. Existing reviews are used narrowly to preserve the broader inspection context and the distinction between qualitative EL evidence and quantitative physical inference \citep{src017,src018,src019}. No new experiment or broad literature review is introduced in this chapter.
+
+\section{Common methodological core}
+\label{sec:ch07-common-core}
+
+\subsection{Spatially explicit supervised evidence}
+
+Both cases use supervised localized predictions rather than only image-level decisions. Bounding boxes identify thermal anomaly candidates or EL defect regions; instance masks identify modules or cells when their separate geometry is required. This spatial explicitness is important because the later inspection relation depends on where a prediction occurs. A class label without geometry cannot be assigned reliably to a module, ordered row, mapped asset, or cell.
+
+The common use of region-based models does not create a common annotation ontology. Thermal detector boxes refer to affected modules under operational thermal-appearance classes. EL boxes refer to reported defect groups, while cell masks describe structural units rather than defects. The shared principle is therefore to preserve a prediction unit compatible with downstream structure, not to impose one class definition or annotation type.
+
+\subsection{Domain information enters where ambiguity arises}
+
+Both programmes are domain-informed, but the information enters at different stages. In the thermal paired experiment, decoded temperature information enriches the input representation supplied to the detector. Thermal structure also enters downstream through module masks, row order, string hypotheses, mapped geometry, and geotagged evidence. In the EL workflow, cell segmentation and indexing change the structural representation through which defect predictions are interpreted; coverage and configured rules then organize those findings for module reporting.
+
+This yields a transferable design principle within the two cases: domain knowledge should be inserted at the stage corresponding to the ambiguity it can resolve. Radiometry addresses information lost or transformed in rendered thermal appearance. Cell structure addresses ambiguity in the physical location and extent of EL findings within a repeated module. Array and map structure address how thermal candidates relate to plant assets. The principle does not require one universal representation or a shared implementation.
+
+\subsection{Connecting predictions to physical structure in the two cases}
+
+In both cases, image coordinates acquire inspection meaning through structural association. A thermal candidate can be related to a predicted module, an ordered row, a candidate string, a mapped polygon, or a source frame. An EL prediction can be related to a segmented and indexed cell, an affected-cell count, a coverage value, and a module report. Domain structure therefore functions as a bridge between image space and inspection space.
+
+The bridge is not automatically correct. Thermal maximum-intersection assignment has no independent association benchmark, and geometric row order is not verified electrical topology. The exact historical rule for associating complete-module EL detections with cells is not documented, and cell identity stability is not quantitatively evaluated. Structural association is common as a function but unequal in implementation and evidential maturity.
+
+\subsection{Stage-specific evaluation and traceability}
+
+Both programmes show why a strong component metric does not establish downstream correctness. A thermal detector score does not validate string identification, module assignment, or positional accuracy. An EL detector or cell-segmentation score does not validate affected-cell association, coverage-based criticality, or report correctness. Dependability must therefore be evaluated at the stage where a claim is made.
+
+Traceability supplies the complementary information-preservation principle. A finding should remain connected to its source image, model output, spatial relation, physical structure, and downstream interpretation. In this thesis, traceability does not denote enterprise data governance; it denotes an inspectable path from evidence to a reviewable record. Figure~\ref{fig:ch07-information-model} expresses this shared functional chain and the modality-specific realizations.
+
+\begin{figure}[htbp]
+  \centering
+  \figplaceholder{FIG-CH07-01 --- Cross-case inspection-information model}{\textbf{Type:} ORIGINAL\_SCHEMATIC\\[0.2em]
+  \textbf{Purpose:} show the common functions and the distinct thermal and EL realizations.\\[0.2em]
+  \textbf{Recommended content:} common sensing--representation--localization--domain-association--interpretation/policy--structured-output chain; thermal branch with radiometry, array/string and geospatial context; EL branch with module/cell representations, affected-cell relation and criticality policy.\\[0.2em]
+  \textbf{Preferred material:} original thesis synthesis derived from Chapters~4--6.\\[0.2em]
+  \textbf{Must show:} preserved source evidence and traceable review output.\\[0.2em]
+  \textbf{Constraints:} do not imply common software, detector or dataset; a validated universal architecture; equal validation maturity; end-to-end accuracy; or deployment.}
+  \caption{Common inspection-information functions and their modality-specific realization in the thermal and electroluminescence cases.}
+  \label{fig:ch07-information-model}
+\end{figure}
+
+Table~\ref{tab:ch07-common-specific} summarizes the common methodological core and the main modality-specific realizations. The validation-boundary column prevents a common function from being mistaken for equally strong evidence.
+
+\begin{longtable}{p{2.5cm} p{3.3cm} p{3.3cm} p{3.7cm}}
+\caption{Shared principles, modality-specific realizations, and validation boundaries.}\label{tab:ch07-common-specific}\\
+\toprule
+Dimension & Thermal realization & EL realization & Shared principle and boundary \\
+\midrule
+\endfirsthead
+\toprule
+Dimension & Thermal realization & EL realization & Shared principle and boundary \\
+\midrule
+\endhead
+Representation & Rendered thermal channels plus an aligned normalized temperature-derived channel in the paired experiment & Complete-module and segmented-cell representations & Preserve domain information relevant to the ambiguity; no universal input representation follows \\
+Localization & Module-level anomaly boxes; module masks in structural workflows & Defect boxes and cell instances & Retain spatially explicit evidence at a declared unit \\
+Physical structure & Module, row, candidate string, plant geometry & Module and indexed cells & Relate predictions to the physical organization relevant to review \\
+Interpretation & Temperature profiles, gradient/propagation logic, module assignment, mapping and retrieval & Affected-cell relation, coverage and configurable criticality policy & Keep model evidence distinct from downstream domain logic \\
+Traceability & Source frame, anomaly geometry, module, map coordinates, retrieval state & Source module, defect geometry, cell identity, coverage, policy state, report & Preserve the route from source evidence to a reviewable output \\
+Evaluation & Matched detector comparison; separate segmentation, retrieval and metadata measures; several downstream stages qualitative or unbenchmarked & Source-reported defect and cell metrics; downstream association, criticality and reporting unbenchmarked & Validate the stage that supports the claim; neither case has one end-to-end metric \\
+Industrial context & Utility-scale field inspections and archived site workflows & Manufacturing-oriented factory and processing-centre inspections & Industrial origin supports realism, not complete industrial validation \\
+\bottomrule
+\end{longtable}
+
+\section{Modality-specific domain-information strategies}
+\label{sec:ch07-specific-strategies}
+
+\subsection{Thermal representation enrichment and asset context}
+
+The primary thermal adaptation changes the information available to the detector. The baseline uses the three channels of the camera-rendered thermal image; the paired configuration adds a fourth channel derived from decoded per-pixel temperature values. Alignment, panel-aware statistics, clipping, saturation, and normalization make the radiometric array compatible with the detector while retaining its provenance as a temperature-derived representation \citep{src004}. The fourth channel is neither raw Celsius nor visible-spectrum colour.
+
+This adaptation is best described as \emph{representation enrichment}. The paired comparison was designed to isolate the additional temperature-derived input information while retaining the same dataset, training and evaluation framework, operating thresholds, and downstream detector configuration, apart from the necessary adaptation of the first layer from three to four input channels. The four-channel configuration produces higher reported macro precision, recall, and F1-score under those conditions. The experiment therefore provides direct component-level evidence that access to the enriched representation changes predictive performance in the recorded setting. It does not establish universal gains across sites, sensors, detector families, or training runs.
+
+Thermal domain structure also enters after localization. Module masks restrict temperature extraction to assets; centroid grouping and spatial order produce module sequences; gradient breaks and propagation form candidate anomalous groups; maximum-intersection assignment connects anomaly boxes with module boxes; and orthomosaic and image-geotag processing add plant context and retrievable evidence \citep{src003,src005}. These operations extend the detector toward inspection information, but their validation strength ranges from quantitative component evaluation to qualitative demonstration.
+
+\subsection{EL structural decomposition and policy-explicit reporting}
+
+The EL adaptation primarily changes the structural organization through which localized outputs are interpreted. Complete-module processing retains module context, while segmented-cell processing supplies a repeated physical unit and an address. Mask R-CNN cell segmentation and sequential numbering permit defect findings to be expressed relative to cell geometry \citep{src002}. In this thesis, the relevant documented representation distinction is between complete-module and segmented-cell views. No controlled module-only versus cell-only comparison, sliding-window scale, three-branch system, fusion ablation, or quantified multi-scale benefit is evidenced.
+
+This adaptation is best described as \emph{structural decomposition and indexing}. A cell-crop prediction inherits its source-cell identity, while complete-module detections require a spatial association whose historical rule is not documented. Once a cell-related finding exists, the reported workflow retains defect type and location, affected-cell count, cell location, percentage coverage, and criticality state. This transforms a prediction into a structured module record.
+
+The configurable criticality rule is a particularly clear separation between detection evidence and decision policy. A defect-specific coverage threshold assigns a policy state, but exact thresholds and their derivation are unavailable, and no independent electrical-severity validation is reported. The policy may support prioritization without constituting a learned diagnosis or a validated estimate of power loss, failure probability, safety risk, or remaining life. Quantitative EL interpretation more broadly depends on acquisition and calibration conditions, which reinforces this boundary \citep{src019}.
+
+\subsection{Difference without false dichotomy}
+
+Representation enrichment and structural decomposition describe the primary contrast, not mutually exclusive categories. Thermal processing also depends strongly on structural association after detection. EL processing also depends on input scale and spatial representation before reporting. The distinction identifies where the strongest case-specific domain adaptation enters: radiometric content in the thermal detector and cell-organized interpretation in the EL workflow.
+
+Neither approach is inherently superior. Thermal radiometry cannot replace module and plant context, and cell indexing cannot replace adequate EL appearance information. Across the cases, the relevant question is not how much domain information is added, but whether it enters at the correct stage, preserves provenance, and is validated for the claim it supports.
+
+\section{Synthesis of experimental evidence}
+\label{sec:ch07-experimental-synthesis}
+
+\subsection{Thermal evidence}
+
+The strongest controlled result is the matched three-channel versus four-channel thermal detector comparison \citep{src004}. Macro precision increases from 0.832 to 0.874, recall from 0.871 to 0.903, and F1-score from 0.851 to 0.887. The absolute changes are 4.2, 3.2, and 3.6 percentage points; the corresponding relative changes are 5.0\%, 3.7\%, and 4.2\%. Both precision and recall improve at the recorded operating point, so the result is not merely a shift toward accepting more candidates.
+
+The class-level pattern is heterogeneous. Spot improves in precision and recall; diode improves in both with high recorded values; multiple spots retains precision while recall increases; and open circuit improves mainly through precision. These differences are observations within one paired experiment. No repeated-seed uncertainty, confidence interval, or significance test is available, so the changes are not described as statistically significant. The image-level plant-stratified partition also does not establish transfer to an unseen plant.
+
+The structural thermal studies provide different evidence. The open-string study reports near-perfect source values for module segmentation but only a qualitative end-to-end example for row grouping, gradient breaks, propagation, and candidate string identification \citep{src003}. The geospatial study reports COCO AP@[.50:.95] of 0.798 for boxes and 0.791 for masks \citep{src005}. Mask AP increases from 0.554 for small instances to 0.861 for medium and 0.976 for large instances, identifying small modules as the weakest scale. Its deterministic downstream logic achieves candidate-image retrieval coverage of 49/56 findings (87.5\%) within 10~m across two archived sites, while 2,321/2,354 records (98.6\%) contain the required geographic metadata. Retrieval distance is not positional error, metadata completeness is not geodetic accuracy, and neither result validates anomaly-to-module assignment.
+
+\subsection{EL evidence}
+
+The EL source reports the class-level values in Table~\ref{tab:ch07-el-results} \citep{src002}. They are retained exactly as reported. Within the source table, recall exceeds precision for all four groups, and soldering has the highest displayed precision and F1-score. These observations do not establish intrinsic class difficulty because class counts, model configurations, thresholds, and evaluation sampling differ and are incompletely documented.
+
+\begin{table}[htbp]
+\centering
+\caption{Source-reported EL defect results. The aggregate is preserved as reported; it is not used as a cross-case comparator.}
+\label{tab:ch07-el-results}
+\begin{tabular}{lrrr}
+\toprule
+Defect group & Precision & Recall & F1-score \\
+\midrule
+Black-spot & 0.836 & 0.885 & 0.856 \\
+Scratch & 0.844 & 0.883 & 0.863 \\
+Cross-crack & 0.859 & 0.945 & 0.900 \\
+Soldering & 0.906 & 0.930 & 0.918 \\
+\midrule
+Source-reported aggregate & 0.861 & 0.919 & 0.889 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The unweighted means of the four displayed rows are 0.86125 precision, 0.91075 recall, and 0.88425 F1-score. Only the displayed aggregate precision is reproduced by simple averaging to three decimals. The source does not disclose whether recall and F1 use weighting, pooled counts, unrounded values, another subset, or a transcription path. In addition, the displayed black-spot precision and recall yield an F1-score of approximately 0.860 when inserted directly into the harmonic-mean formula, rather than the reported 0.856. Hidden unrounded values, transcription, or another calculation path are possible; none is established. The source values and derived consistency checks therefore remain separate.
+
+The cell-segmentation model is reported with precision, recall, and F1-score all equal to 0.99. Missing sample size, matching unit, threshold, averaging method, and split definition prevent these values from establishing correct cell count, ordering, identity stability, or downstream association accuracy. The confidential applied-case ``Accuracy Rate'' values are not used as standard detector accuracy because their denominator, sampling protocol, and metric definition are unavailable.
+
+\subsection{Cross-case interpretation without a leaderboard}
+
+Table~\ref{tab:ch07-evidence-comparison} compares evidence rather than raw scores. The thermal paired experiment isolates one input change under matched conditions. The EL detector table supplies class-specific source-reported outcomes without an equally complete evaluator or branch-ablation record. The cases therefore answer different empirical questions. Similar numerical ranges do not make them a common benchmark.
+
+\begin{table}[htbp]
+\centering
+\caption{Case-specific experimental evidence and comparability limits.}
+\label{tab:ch07-evidence-comparison}
+\begin{tabularx}{\textwidth}{p{2.8cm}YYp{3.4cm}}
+\toprule
+Dimension & Thermal evidence & EL evidence & Comparability limit \\
+\midrule
+Principal detector question & Effect of an additional temperature-derived channel under a matched comparison & Performance reported for four defect groups under incompletely documented detector organization & Different intervention, labels, images, and protocol \\
+Principal metrics & Fixed-point class and macro precision, recall, and F1-score with documented matching & Source-reported class and aggregate precision, recall, and F1-score; aggregation unresolved & Same metric names do not establish the same measurement procedure \\
+Structural processing & Module segmentation, row/string reasoning, module association, mapping and retrieval & Cell segmentation/indexing, affected-cell relation, coverage policy and reporting & Different structural units and downstream decisions \\
+Downstream validation & Retrieval coverage and metadata completeness quantified; string and association accuracy unbenchmarked & Association, criticality and report correctness unbenchmarked & No common end-to-end outcome \\
+Independence & Image-level plant-stratified detector validation; no site-disjoint benchmark & Separate evaluation stated; module/batch/factory grouping unknown & Neither establishes a common independent-domain test \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The shared experimental lesson is not that one modality performs better. It is that useful component results must retain their task and validation context. Class-wise performance should be interpreted within its sensor, taxonomy, annotation unit, class distribution, and evaluator. Cross-case synthesis begins only after those conditions have been preserved.
+
+\section{Domain structure and traceable inspection information}
+\label{sec:ch07-domain-structure}
+
+Localization becomes operationally meaningful only when a finding can be related to the inspected asset. A bounding box or mask answers where a model has placed a defect-like region in image coordinates. It does not, by itself, identify the physical module or cell, establish the electrical grouping to which that component belongs, or preserve the evidence needed to review the finding later. Both case studies therefore extend localized prediction through a domain structure. The structures differ, but their methodological function is the same: they convert a spatial prediction into an addressable inspection record.
+
+In the thermal case, the relevant structure is external to any single image. Modules form repeated rows and electrically connected strings across a geographically distributed plant. The workflow therefore uses module segmentation and array geometry to organize detections, then combines image-derived findings with positional and acquisition metadata for mapping and retrieval. This context supports reasoning at several levels: detected anomaly, intersected module, row or string candidate, flight capture, and geographic location. The source record nevertheless distinguishes visually inferred rows from electrically verified strings. A geometric sequence cannot silently acquire an electrical identity merely because both are useful organizational concepts.
+
+In the EL case, structure is predominantly contained within the module image. The module is decomposed into cells, those cells are indexed, and a detected defect can be related to one or more affected cells. The resulting record can include module identity, cell position, defect class, defect extent, cell coverage, policy state, and report representation. The known source cell of a cropped inference supplies strong local provenance for crop-based processing, but it does not validate every association made from detections produced on a complete-module image. The distinction matters because a correct cell mask and a correct defect box do not guarantee a correct box-to-cell relation.
+
+These two structural systems are not interchangeable. The thermal structure expresses spatial layout, repeated plant organization, and potentially electrical grouping over a large outdoor asset. The EL structure expresses a contained module hierarchy and repeated cell lattice under controlled image acquisition. Their shared value lies in supplying stable domain addresses. A domain address allows a finding to be retrieved, grouped, reviewed, compared with related findings, and represented in a structured output without confusing image coordinates with asset identity.
+
+\subsection{Traceability as a chain rather than a file attribute}
+
+Traceability is used here to mean the ability to follow an inspection statement back through the transformations that produced it. It is not satisfied by attaching a filename to a final report. A traceable record should preserve, to the extent supported by the case, the source observation, the computational prediction, the spatial or structural association, the interpretation or policy applied, and the output delivered for review. Table~\ref{tab:ch07-traceability} applies this chain to both cases.
+
+\begin{table}[htbp]
+\centering
+\caption{Cross-case traceability chain and case-specific realizations.}
+\label{tab:ch07-traceability}
+\begin{tabularx}{\textwidth}{p{3.0cm}YY}
+\toprule
+Traceability element & Thermal realization & EL realization \\
+\midrule
+Source evidence & Radiometric thermal capture, image identifier, acquisition context, and available positional metadata & Complete-module or cell image, module identifier where available, and acquisition record \\
+Localized prediction & Defect or anomaly box/mask with class and model output & Defect box with class and model output; cell masks from the segmentation branch \\
+Domain association & Intersected module, inferred row/string context, and map position & Indexed cell or cells related to the defect region \\
+Interpretation or policy & Temperature-aware classification and case-specific anomaly/string logic & Defect-specific coverage calculation and configurable criticality policy \\
+Structured output & Mapped inspection finding, metadata record, and source-image retrieval path & Module-level finding and report entry retaining cell, class, coverage, and policy state \\
+Principal unresolved link & Electrical string ground truth and anomaly-to-module association accuracy & Whole-module defect-to-cell association and criticality-policy validation \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Within these two workflows, traceability is only as strong as its least documented transition. An accurate detector can produce a weakly traceable result when asset association is implicit. Conversely, a well-structured report does not repair an unreliable prediction. The value of the chain is analytical: it identifies which transformation supports a claim and where review must return when a finding is questioned.
+
+The cases also show that identifiers have different epistemic strengths. An image identifier can be recorded exactly, while a module association can be algorithmically inferred. A stable cell index can in principle be generated once an explicit ordering rule is defined, but the historical ordering rule is not documented and the correctness of the underlying segmentation remains empirical. A criticality state can be reproduced from a threshold, while the fitness of that threshold for operational decision-making remains unvalidated. Dependable inspection information requires these differences to remain visible rather than being flattened into a single confidence label.
+
+\section{Stage-wise dependability and error propagation}
+\label{sec:ch07-dependability}
+
+Dependability in these workflows is not a single model score. It is the warranted confidence that the produced inspection information is fit for its stated use, given the evidence available at every transformation. For cross-case analysis, the workflow is divided into six stages: sensing and acquisition, representation, localization, structural association, interpretation or decision logic, and reporting or retrieval. This division is an analytical framework developed for the thesis. It is not presented as a standardized industrial maturity model.
+
+At the sensing and acquisition stage, dependability concerns whether the observation preserves the physical or visual signal required for inspection. Thermal measurements depend on radiometric conditions, acquisition geometry, environmental context, and the distinction between apparent temperature patterns and confirmed failure mechanisms. EL observations depend on excitation and imaging conditions, module presentation, and the appearance of defects within the cell lattice. Neither detector can recover evidence that was not captured or was rendered ambiguous at acquisition.
+
+Representation concerns the data actually presented to an algorithm. In the thermal case, the comparison between ordinary three-channel input and the temperature-augmented representation provides direct evidence that radiometric information can improve a matched detector evaluation. In the EL case, the relevant documented representation distinction is between complete-module and segmented-cell views: the complete module retains global context, while segmented cell views make the repeated lattice explicit and bind local processing to a cell address. These are different technical interventions, but both place domain-relevant information where the subsequent model can use it. The EL evidence does not establish that either view, or their combination, is experimentally superior.
+
+Localization concerns the ability to identify a defect-like region with the intended class and spatial extent. The thermal and EL detector results support component-level claims at this stage, subject to their respective evaluators and split definitions. Localization does not establish physical severity, electrical impact, asset identity, or correct report delivery. Those questions enter later stages.
+
+Structural association relates the localized region to an asset organization. Thermal examples include module intersection, plant rows, candidate strings, and geographic context. EL examples include cell masks, cell ordering, defect-to-cell association, and module hierarchy. Errors at this stage can be operationally consequential even when the localization is correct: a real anomaly can be assigned to the wrong module, or a real EL defect can be attributed to the wrong cell.
+
+Interpretation or decision logic converts structured evidence into a category, priority, or policy state. Thermal string anomaly logic and EL affected-area thresholds exemplify this stage. Such rules may be useful and reproducible while remaining only partially validated. Their outputs must therefore be described as rule- or policy-derived states unless physical, electrical, or operational ground truth supports a stronger interpretation.
+
+Reporting and retrieval preserve the result for use. The thermal workflow demonstrates mapping, metadata association, and source-image retrieval; the EL workflow demonstrates module-level reporting populated by defect and cell information. Validation at this stage concerns completeness, correctness, retrievability, and retention of provenance. It cannot be inferred from detector performance.
+
+\begin{figure}[htbp]
+\centering
+\figplaceholder{FIG-CH07-02}{Original schematic of stage-wise dependability and validation boundaries. Show the six stages from acquisition to reporting, case-specific examples below each stage, and separate evidence gates between stages. Mark propagation paths and identify the principal unvalidated transitions without suggesting numerical comparability. Any annotations must be descriptive evidence states, not maturity levels, traffic-light scores, composite ratings, or case rankings.}
+\caption{Stage-wise dependability and evidence boundaries in the thermal and electroluminescence workflows.}
+\label{fig:ch07-dependability}
+\end{figure}
+
+\subsection{Error propagation across the workflow}
+
+The staged view makes two error-propagation patterns visible. The first is direct propagation. A missed defect produces no downstream record, and an inaccurate mask can distort the coverage estimate used by a later rule. The second is semantic propagation. A geometrically correct detection can be assigned an unwarranted meaning, such as treating an inferred plant row as a verified electrical string or treating image-area coverage as measured electrical severity. Semantic propagation is especially hazardous because the intermediate geometry may look plausible while the final statement exceeds the evidence.
+
+Thermal processing illustrates both patterns. Acquisition or radiometric calibration limitations can alter temperature representation. Localization errors can omit or misclassify an anomaly. Module-segmentation or intersection errors can associate it with an incorrect asset. Row propagation can extend a structural mistake across several modules. Geospatial metadata errors can lead the reviewer to a wrong location or source image. In this workflow, each stage requires ground truth matched to the correctness claim being made.
+
+EL processing has an analogous chain. Cell-segmentation errors can change cell boundaries or indices. Detector errors can omit a defect or confuse categories. Association errors can change which cell is marked. Coverage calculation can inherit both localization and mask errors. A threshold then converts that uncertain quantity into a policy state, and the report can reproduce the state perfectly without validating the preceding transformations. End-to-end correctness is therefore not the product of individually impressive component scores unless the interfaces between components are also evaluated.
+
+The implication is not that every prototype must immediately support exhaustive system validation. It is that claim scope should follow validation scope. Component studies can legitimately establish component behavior. A workflow demonstration can establish that structured output is technically constructible. Claims of dependable operational decision support require additional evidence covering associations, rules, human interaction, and real use.
+
+\section{Industrial validation as a multidimensional assessment}
+\label{sec:ch07-industrial-validation}
+
+The word \emph{industrial} describes more than the origin of images. Industrial validation concerns whether a workflow has been examined under evidence conditions that represent its intended setting and whether its outputs have been shown to support the intended task. The two case studies contain genuine industrial elements, but those elements occur at different stages and with different validation strength. Treating industrial validation as a binary label would conceal those differences.
+
+This chapter therefore assesses six dimensions. \emph{Industrial data realism} asks whether the evidence originates from or credibly represents the intended inspection environment. \emph{Component technical validation} concerns detectors, segmenters, or other isolated algorithms. \emph{Structural and downstream validation} concerns the associations, decision rules, retrieval mechanisms, and report transformations that follow prediction. \emph{Independent-domain validation} concerns separation across assets, sites, factories, sensors, campaigns, or other groups relevant to deployment shift. \emph{Operational and human validation} concerns use by intended practitioners, decision effects, review burden, and agreement. \emph{Deployment evidence} concerns prospective or sustained use in an operating process, including monitoring and maintenance. These dimensions are thesis-level analytical categories, not a normative maturity scale. The labels \emph{documented}, \emph{documented but bounded}, \emph{partial}, and \emph{not established} describe the available evidence within each dimension; they are not ordinal maturity levels, do not form a composite validation score, and do not rank the thermal and EL cases.
+
+\begin{longtable}{p{3.0cm}p{4.8cm}p{4.8cm}}
+\caption{Evidence-based industrial-validation assessment for the two case studies.}\label{tab:ch07-industrial-validation}\\
+\toprule
+Dimension & Thermal case & EL case \\
+\midrule
+\endfirsthead
+\toprule
+Dimension & Thermal case & EL case \\
+\midrule
+\endhead
+Industrial data realism & \textbf{Documented.} Field thermal imagery and plant-scale organizational and geospatial concerns represent an outdoor inspection setting. & \textbf{Documented.} Industrial EL imagery and a confidential applied reporting case represent module inspection under controlled acquisition. \\
+Component technical validation & \textbf{Documented but bounded.} Detector comparison, module segmentation, and open-string experiments provide component evidence with different levels of evaluator detail. & \textbf{Documented but bounded.} Defect-detection and cell-segmentation results are reported, but important evaluator, sample, and split details remain unavailable. \\
+Structural and downstream validation & \textbf{Partial.} Retrieval coverage and metadata completeness are quantified; electrical string correctness and anomaly-to-module association accuracy are not. & \textbf{Partial.} Structural decomposition and report generation are demonstrated; defect-to-cell association and policy correctness are not benchmarked. \\
+Independent-domain validation & \textbf{Not established.} Image-level plant stratification is reported for a principal detector study, but no site-disjoint, campaign-disjoint, or sensor-disjoint benchmark is available. & \textbf{Not established.} Separate evaluation is reported, but separation by module, production batch, factory, or acquisition condition is not documented. \\
+Operational and human validation & \textbf{Not established.} Intended review and field retrieval are described, but no prospective user study, decision-impact analysis, or workload measurement is available. & \textbf{Not established.} Annotation and intended report review involve human expertise, but no reviewer agreement, usability, or operational-effect study is available. \\
+Deployment evidence & \textbf{Not established.} The evidence supports an applied workflow and prototype components, not sustained monitored deployment. & \textbf{Not established.} The evidence supports applied analysis and reporting, not a verified production deployment. \\
+\bottomrule
+\end{longtable}
+
+\subsection{What is validated in the thermal case}
+
+The thermal case has the clearest controlled comparison at the representation and localization stages. Adding the temperature-derived channel improved the reported macro precision, recall, and F1-score under a matched experiment. Separate work demonstrates module segmentation, open-string reasoning, plant-scale mapping, metadata association, and source-image retrieval. The retrieval and metadata results quantify concrete downstream properties and therefore extend validation beyond detector metrics.
+
+The evidence is still not end-to-end. The fixed-point detector evaluator does not measure site-disjoint generalization. The open-string workflow lacks electrical string ground truth. The anomaly-to-module intersection rule is described but not benchmarked against verified module identity. A retrieval location within ten metres establishes coverage under that criterion, not geospatial positional accuracy. Metadata completeness establishes that fields are populated, not that their contents are correct. The appropriate characterization is an applied, multi-stage workflow with validated components and partial downstream evidence.
+
+\subsection{What is validated in the EL case}
+
+The EL case validates the feasibility of combining defect detection with a cell-aware structural representation. Reported class-wise detector results show that the four represented categories can be localized under the source conditions. Reported cell-segmentation results indicate strong component behavior under an incompletely documented protocol. The applied case demonstrates that defect findings, cell relations, coverage calculations, configurable policy states, and module-level reports can be assembled into a traceable workflow.
+
+The missing evidence prevents a stronger claim. The exact evaluator and detector organization are not sufficiently documented to reconstruct all aggregate values. The segmentation result does not validate stable cell enumeration. The complete-module defect-to-cell rule is not documented or benchmarked. The criticality threshold is a configurable operational policy whose physical or electrical calibration is unavailable. The confidential ``Accuracy Rate'' has no recoverable denominator and cannot validate the system. The appropriate characterization is an industrially grounded prototype workflow with component evidence and an unvalidated downstream decision chain.
+
+\subsection{Why industrial data are necessary but insufficient}
+
+Industrial data introduce realistic defects, backgrounds, acquisition artefacts, confidentiality constraints, and asset organization. They are indispensable for relevance. Yet a dataset can be industrial and still permit leakage between training and evaluation, cover only one site or factory, omit rare conditions, or be evaluated solely at image level. Likewise, an industrially formatted report can be generated without evidence that a practitioner can use it reliably.
+
+Industrial validation therefore depends on the relationship between evidence and intended claim. For a claim about detection on the represented dataset, component evaluation may suffice. For a claim about transfer to another plant, sensor, production batch, or module technology, grouped external validation is required. For a claim about operational benefit, prospective evidence involving users, decisions, time, cost, or failure outcomes is required. Neither case study supplies the latter evidence, and this thesis does not substitute plausibility for measurement.
+
+\section{Robustness, generalization, and dataset shift}
+\label{sec:ch07-robustness}
+
+Robustness and generalization must be evaluated against plausible changes in the inspection domain. Random or image-level splits can estimate performance within a represented distribution, but they may not expose dependence among images from the same asset, acquisition campaign, or production batch. Group-aware validation is particularly important where repeated observations or highly regular structures make related samples visually similar \citep{src066,src067}. The relevant grouping variable is case-specific.
+
+For thermal inspection, important shift axes include plant, module technology, sensor, radiometric calibration, flight campaign, weather, irradiance, viewing angle, spatial resolution, and background conditions. The available studies represent real field imagery and some variation within their datasets. The principal paired comparison uses a documented image-level, plant-stratified evaluation rather than a held-out-site benchmark. It therefore supports an internal comparison of representations but not a claim that the magnitude of improvement will transfer unchanged to a new plant or sensor. The geospatial workflow broadens the represented operational context, yet no common external-validation protocol joins its results to the detector comparison.
+
+For EL inspection, important shift axes include factory or laboratory, module and cell technology, production batch, excitation setting, camera, exposure, module alignment, defect taxonomy, and prevalence. The available evidence represents more than one source context, including an applied confidential case, but the relationship among modules, batches, and evaluation partitions is not sufficiently documented. Strong results on segmented cells may partly benefit from regular acquisition and repeated geometry; whether they persist under another production line or module architecture remains unknown.
+
+The cases consequently demonstrate \emph{represented variability}, not verified robustness to every relevant shift. This distinction avoids two opposite errors. The first is dismissing applied datasets because they are not universal: evidence can be valuable within a defined domain. The second is treating multiple images or multiple nominal sources as proof of generalization: independence must be established at the level at which transfer is claimed.
+
+A stronger future validation design would predefine grouping variables before model selection. Thermal studies would benefit from held-out plants, campaigns, or sensors, alongside explicit calibration and environmental metadata. EL studies would benefit from held-out modules, batches, factories, or module technologies, alongside documented acquisition settings. Both would benefit from reporting confidence intervals or repeated-run variability where feasible. These recommendations identify what evidence would be needed; they do not retroactively alter the completed studies.
+
+\section{Human expertise, operational evidence, and deployment}
+\label{sec:ch07-human-operation}
+
+Automation in both cases is embedded in an inspection process shaped by human judgment. Documented human involvement includes defect taxonomy, annotation, acquisition or inspection context, radiometric interpretation, and intended review of outputs. The systems do not eliminate those judgments; they express some of them through representations, labels, association rules, configurable policy, and report structure. This does not establish the provenance of every historical rule or parameter.
+
+In the thermal case, human expertise is evident in defining anomalous patterns, interpreting radiometric imagery, distinguishing geometrical rows from electrical strings, and reviewing mapped findings against source images and site knowledge. In the EL case, defect annotation, cell-aware interpretation, and intended review of module-level reports document human involvement. A configurable coverage-based policy exists, but the source does not establish who selected its exact thresholds or how they were derived, calibrated, optimized, or tested for sensitivity. The historical threshold values therefore cannot be characterized as expert-defined. The documented human roles were not evaluated through a formal human-factors study.
+
+The absence of a user study sets a clear boundary. The thesis does not establish inter-reviewer agreement, reduced inspection time, lower workload, improved maintenance decisions, or better safety or yield. It also does not establish the calibration of model confidence for human reliance. A traceable report may make review more practicable because it retains evidence and structure, but this is a design rationale rather than a measured outcome.
+
+\subsection{Runtime, scalability, and maintainability}
+
+The source studies do not provide a common runtime protocol. Hardware, batch size, image resolution, preprocessing, model configuration, and downstream processing differ or are incompletely reported. No valid cross-case throughput comparison can therefore be made. Plant-scale thermal inspection and controlled EL inspection also face different scaling constraints: thermal processing must manage large spatial extents, repeated captures, and metadata, whereas EL processing must manage module throughput, cell decomposition, and repeated reporting under controlled acquisition.
+
+Scalability evidence is consequently sparse. Demonstrating that many records can be organized or that a workflow can generate reports does not establish production throughput, latency, availability, or cost. Likewise, maintainability is not directly evaluated. The staged architecture suggests practical maintenance boundaries---sensor calibration, model updating, structural rules, policy configuration, and report schema can in principle be managed separately---but no monitoring, retraining, version-control, or change-impact study is reported.
+
+\subsection{Potential industrial value versus measured impact}
+
+Both workflows have credible industrial purposes. Thermal mapping and retrieval can help organize geographically dispersed field evidence. EL cell association and module reports can help structure factory or laboratory findings. Traceability can support review by retaining the observation and transformations behind a result. These are potential workflow benefits grounded in the implemented designs.
+
+They are not measurements of operational impact. The studies do not quantify avoided failures, energy recovery, yield improvement, maintenance savings, report preparation time, inspection throughput, or return on investment. Nor do they document sustained prospective use with monitored performance. The defensible deployment description is therefore \emph{applied prototype or workflow demonstration}, not autonomous production system.
+
+\section{Threats to validity}
+\label{sec:ch07-validity}
+
+The cross-case conclusions inherit limitations from the individual studies and from the synthesis itself. Organizing them by validity type clarifies which claims are affected and what further evidence would reduce uncertainty.
+
+\subsection{Internal validity}
+
+Internal validity concerns whether reported differences and outputs can be attributed to the intended intervention rather than uncontrolled factors. The thermal paired detector experiment was designed to isolate the additional temperature-derived input while holding the dataset, training and evaluation framework, and downstream detector configuration constant, apart from the necessary first-layer adaptation from three to four channels. This supports a bounded representation comparison, but the available record does not establish repeated-seed variability, statistical significance, or independent-site transfer. Other thermal studies use different datasets and evaluators, so their results cannot be treated as replications of the paired comparison. The EL detector table lacks enough evaluator and aggregation detail to reconstruct all reported values, and the black-spot row contains a small arithmetic inconsistency. Cell-segmentation sample size and matching procedure are unavailable. In both cases, undocumented partition dependencies could inflate apparent performance.
+
+Downstream internal validity is more limited. Module or cell association, string reasoning, policy thresholds, and report correctness are not evaluated with a common end-to-end ground truth. A successful output example shows technical operation, not causal evidence that every preceding stage is correct. Because the chapter performs no new experiments, it cannot resolve these study-level uncertainties.
+
+\subsection{Construct validity}
+
+Construct validity concerns whether the measurements represent the concepts claimed. Precision, recall, and F1-score measure detector behavior under a specified matching rule; they do not directly measure inspection dependability. Retrieval within ten metres measures coverage under a retrieval criterion, not positional error. Metadata completeness measures field population, not accuracy. EL image-area coverage measures geometric overlap, not physical severity, electrical power loss, or safety risk. A configurable criticality state is an operational policy output, not a validated material diagnosis.
+
+The term \emph{industrial validation} also risks construct inflation. This chapter avoids using it as a synonym for industrial data or applied presentation and instead decomposes it into six evidence dimensions. The decomposition improves transparency but remains an analytical choice of the thesis rather than an externally standardized scale.
+
+\subsection{External validity}
+
+External validity is constrained by domain coverage and uncertain independence. The thermal studies do not establish transfer across plants, sensors, or campaigns under a site-disjoint protocol. The EL studies do not establish transfer across factories, batches, module technologies, or acquisition configurations. Dataset lineage is not fully resolved for all thermal studies, and the grouping structure of the EL data is incomplete. Results should therefore be generalized to the represented conditions, not to photovoltaic inspection universally.
+
+The two modalities themselves are intentionally heterogeneous. Their agreement on a workflow principle can support analytical generality, but two cases cannot demonstrate exhaustiveness across visual, electrical, acoustic, or other inspection modalities. The synthesis identifies transferable design propositions that require testing in additional domains.
+
+\subsection{Conclusion validity}
+
+Conclusion validity concerns the strength of the inferences drawn from the evidence. No cross-case statistical test is possible because datasets, labels, evaluators, units, and interventions differ. Numerical comparison across the thermal and EL tables would therefore be misleading. The chapter instead uses pattern matching: it asks whether independently developed workflows require analogous transformations and where the evidence diverges.
+
+This approach supports the conclusion that domain structure and traceability recur as methodological needs. It does not establish that the proposed chain is uniquely optimal, that each stage contributes an equal performance gain, or that a shared architecture will outperform case-specific alternatives. Arithmetic checks and explicit unknowns reduce the risk of overstatement, but the synthesis remains bounded by the surviving source record.
+
+\section{Cross-case lessons learned}
+\label{sec:ch07-lessons}
+
+\subsection{Lesson 1: target domain knowledge to the ambiguity it resolves}
+
+Across the two cases examined here, the evidence does not support the vague proposition that more domain knowledge is always better. The temperature-derived thermal channel addresses an ambiguity in ordinary image representation by exposing calibrated radiometric information. Cell segmentation addresses an ambiguity in module-scale localization by making the repeated lattice and cell identity explicit. Within these workflows, domain knowledge is valuable when its role in the information chain is stated and evaluated.
+
+\subsection{Lesson 2: treat localization as an intermediate evidence object}
+
+Across the thermal and EL cases, localization is necessary but does not by itself constitute the final inspection information product. A defect box or mask is an intermediate result: field inspection requires an asset and location, while EL inspection requires a module, cell relation, and interpretable report entry. For these workflows, designing the downstream representation together with the detector reduces the risk that accurate predictions remain operationally orphaned.
+
+\subsection{Lesson 3: validate structural inference separately}
+
+In the two case studies, rows, strings, modules, and cells are not mere display decorations. They determine how findings are grouped and where action may be directed. A segmentation score or visually regular grid does not automatically validate structure identity. Any claim about these structural relations must be supported by ground truth and a metric matched to that claim.
+
+\subsection{Lesson 4: preserve traceability from the source observation forward}
+
+Within the inspection-information objective of this thesis, provenance is difficult to reconstruct after aggregation. Both cases benefit when identifiers, spatial relations, acquisition metadata, and transformation outputs are retained from the beginning. Traceability also improves scientific auditability because discrepancies can be localized to a stage rather than attributed to an opaque end-to-end system.
+
+\subsection{Lesson 5: distinguish industrial realism from independent validation}
+
+The two cases indicate that real industrial images strengthen relevance, while evaluation independence determines what transfer can be claimed. Reporting should therefore distinguish the realism of the evidence from the grouping level at which evaluation is separated. Neither property substitutes for the other.
+
+\subsection{Lesson 6: separate evidence, interpretation, and policy}
+
+For the thermal and EL workflows considered here, the prediction supplies evidence, the structural relation supplies context, and a threshold or rule supplies policy. Conflating them can turn an uncertain geometric output into an apparently definitive diagnosis. Their reports should preserve the distinction so that rules can be revised without rewriting the underlying observation.
+
+\subsection{Lesson 7: treat dataset lineage as part of the scientific result}
+
+Within this thesis, unresolved dataset overlap determines whether a later experiment can be interpreted as independent confirmation. The unresolved relationships among some thermal studies and incomplete grouping information in the EL evidence limit synthesis. Stable asset, module, campaign, and source identifiers would make future evidence accumulation more reliable.
+
+\subsection{Lesson 8: match end-to-end claims to end-to-end ground truth}
+
+Across the two cases, component metrics cannot establish correct operational output when association and decision stages remain untested. Future validation of these workflows should sample complete records from source observation through report and verify each transition against appropriate ground truth. This is especially important where a correct prediction can be attached to the wrong asset or converted by an uncalibrated policy.
+
+\section{Answer to Specific Research Question 3}
+\label{sec:ch07-srq3}
+
+\begin{quote}
+\textbf{SRQ3:} Which methodological and workflow principles for producing dependable and traceable inspection information are shared across the thermal and electroluminescence cases, and which remain specific to their sensing and industrial contexts?
+\end{quote}
+
+The shared principle is a staged conversion of sensor evidence into an auditable inspection record:
+\[
+\text{sensor evidence}
+\rightarrow \text{domain-relevant representation}
+\rightarrow \text{localized prediction}
+\rightarrow \text{structural association}
+\rightarrow \text{interpretation or policy}
+\rightarrow \text{traceable output}.
+\]
+Across both cases, dependability requires that each transition be evaluated at the level of the claim it supports; detector performance must remain separate from association, decision, retrieval, and reporting correctness. Domain structure converts image coordinates into asset-relevant addresses. Traceability retains the source observation, transformations, and policy state so that a reviewer can reconstruct the basis of a finding. Industrial validation is consequently multidimensional: realistic data and validated components are important, but they do not establish independent-domain robustness, human benefit, or deployment.
+
+What remains case-specific is the physical evidence, the useful representation, the asset hierarchy, and the downstream decision context. Thermal inspection depends on radiometric interpretation under variable field acquisition and benefits from temperature-aware representation, plant layout, module association, candidate string context, geospatial metadata, and source-image retrieval. EL inspection depends on controlled electroluminescence appearance and benefits from module-to-cell decomposition, cell indexing, defect-to-cell relation, defect-specific area coverage, configurable criticality policy, and module-level reporting. These adaptations should not be forced into a common implementation or ranked by incomparable metrics.
+
+The cases therefore support a common thesis-level methodological abstraction with modality-specific realizations. This is not a common software architecture, shared detector, validated universal industrial-inspection architecture, or end-to-end accuracy model. Within the two PV inspection cases, the transferable principle is that dependable inspection information is produced by joining validated localized evidence to explicit domain structure, preserving provenance through downstream interpretation, and limiting every claim to the stage and domain actually validated.
+
+\section{Chapter summary and boundary with the final conclusions}
+\label{sec:ch07-summary}
+
+This chapter compared the thermal and EL cases at the level of methodological function rather than numerical score. Both begin with specialized image evidence, introduce domain knowledge at a representation or structural stage, localize relevant patterns, relate them to an asset organization, and convert them into structured outputs. Their main adaptations remain distinct: temperature-aware and plant-geospatial reasoning for thermal inspection, and cell-aware hierarchical reasoning and reporting for EL inspection.
+
+The synthesis showed that component performance, structural correctness, traceability, and industrial validation are separate evidence questions. It identified partial downstream validation in both cases, no demonstrated independent-domain benchmark, no formal human or operational evaluation, and no sustained deployment evidence. These limits do not erase the contributions of the case studies; they determine the proper scope of their conclusions.
+
+The answer to SRQ3 is owned by this chapter. Chapter~8 uses it together with the answers to the other research questions to formulate the final thesis-level conclusions. The final chapter also owns the consolidated contribution statement, the final answer to the overarching research question, thesis-wide significance, the final synthesis of limitations, and future research directions. Those functions are intentionally not duplicated here.
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

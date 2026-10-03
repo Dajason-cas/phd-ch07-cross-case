@@ -4,6 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 \usepackage{microtype}
+\usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{tabularx}
@@ -16,9 +17,6 @@
 
 \newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
 \setlist{nosep}
-\newcommand{\figplaceholder}[2]{%
-  \fbox{\parbox[c][6.4cm][c]{0.90\textwidth}{\centering
-  \textbf{FIGURE PLACEHOLDER --- #1}\\[0.5em]#2}}}
 
 \title{Chapter 07\\Cross-Case Synthesis and Industrial Validation}
 \author{}
@@ -105,13 +103,8 @@ Traceability supplies the complementary information-preservation principle. A fi
 
 \begin{figure}[htbp]
   \centering
-  \figplaceholder{FIG-CH07-01 --- Cross-case inspection-information model}{\textbf{Type:} ORIGINAL\_SCHEMATIC\\[0.2em]
-  \textbf{Purpose:} show the common functions and the distinct thermal and EL realizations.\\[0.2em]
-  \textbf{Recommended content:} common sensing--representation--localization--domain-association--interpretation/policy--structured-output chain; thermal branch with radiometry, array/string and geospatial context; EL branch with module/cell representations, affected-cell relation and criticality policy.\\[0.2em]
-  \textbf{Preferred material:} original thesis synthesis derived from Chapters~4--6.\\[0.2em]
-  \textbf{Must show:} preserved source evidence and traceable review output.\\[0.2em]
-  \textbf{Constraints:} do not imply common software, detector or dataset; a validated universal architecture; equal validation maturity; end-to-end accuracy; or deployment.}
-  \caption{Common inspection-information functions and their modality-specific realization in the thermal and electroluminescence cases.}
+  \includegraphics[width=\textwidth]{media/fig-ch07-01-cross-case-information-model.pdf}
+  \caption{Cross-case inspection-information functions aligned with their thermal and EL realizations. Source evidence is retained through the chain. Alignment expresses shared functions, not data exchange, common software, a universal architecture, equal validation maturity or numerical comparability.}
   \label{fig:ch07-information-model}
 \end{figure}
 
@@ -195,7 +188,7 @@ Source-reported aggregate & 0.861 & 0.919 & 0.889 \\
 \end{tabular}
 \end{table}
 
-The unweighted means of the four displayed rows are 0.86125 precision, 0.91075 recall, and 0.88425 F1-score. Only the displayed aggregate precision is reproduced by simple averaging to three decimals. The source does not disclose whether recall and F1 use weighting, pooled counts, unrounded values, another subset, or a transcription path. In addition, the displayed black-spot precision and recall yield an F1-score of approximately 0.860 when inserted directly into the harmonic-mean formula, rather than the reported 0.856. Hidden unrounded values, transcription, or another calculation path are possible; none is established. The source values and derived consistency checks therefore remain separate.
+The unweighted means of the four displayed rows are 0.86125 precision, 0.91075 recall, and 0.88425 F1-score. Only the displayed aggregate precision is reproduced by simple averaging to three decimals. The source does not disclose whether recall and F1 use weighting, pooled counts, unrounded values, another subset, or a transcription path. In addition, the displayed black-spot precision and recall yield an F1-score of approximately 0.860 when inserted directly into the harmonic-mean formula, rather than the reported 0.856. Ordinary rounding of the displayed precision and recall cannot explain this discrepancy. Transcription or another calculation path remain possible, but neither is established. The source values and derived consistency checks therefore remain separate.
 
 The cell-segmentation model is reported with precision, recall, and F1-score all equal to 0.99. Missing sample size, matching unit, threshold, averaging method, and split definition prevent these values from establishing correct cell count, ordering, identity stability, or downstream association accuracy. The confidential applied-case ``Accuracy Rate'' values are not used as standard detector accuracy because their denominator, sampling protocol, and metric definition are unavailable.
 
@@ -277,10 +270,10 @@ Interpretation or decision logic converts structured evidence into a category, p
 Reporting and retrieval preserve the result for use. The thermal workflow demonstrates mapping, metadata association, and source-image retrieval; the EL workflow demonstrates module-level reporting populated by defect and cell information. Validation at this stage concerns completeness, correctness, retrievability, and retention of provenance. It cannot be inferred from detector performance.
 
 \begin{figure}[htbp]
-\centering
-\figplaceholder{FIG-CH07-02}{Original schematic of stage-wise dependability and validation boundaries. Show the six stages from acquisition to reporting, case-specific examples below each stage, and separate evidence gates between stages. Mark propagation paths and identify the principal unvalidated transitions without suggesting numerical comparability. Any annotations must be descriptive evidence states, not maturity levels, traffic-light scores, composite ratings, or case rankings.}
-\caption{Stage-wise dependability and evidence boundaries in the thermal and electroluminescence workflows.}
-\label{fig:ch07-dependability}
+  \centering
+  \includegraphics[width=\textwidth]{media/fig-ch07-02-stage-wise-dependability.pdf}
+  \caption{Stage-wise dependability and evidence boundaries in the thermal and EL workflows. Dashed gates mark transitions that require evidence beyond an upstream component; descriptive examples identify case-specific limitations. Error propagation is conceptual, with no causal magnitude, maturity score, case ranking or end-to-end validation claim.}
+  \label{fig:ch07-dependability}
 \end{figure}
 
 \subsection{Error propagation across the workflow}
@@ -405,7 +398,7 @@ This approach supports the conclusion that domain structure and traceability rec
 
 \subsection{Lesson 1: target domain knowledge to the ambiguity it resolves}
 
-Across the two cases examined here, the evidence does not support the vague proposition that more domain knowledge is always better. The temperature-derived thermal channel addresses an ambiguity in ordinary image representation by exposing calibrated radiometric information. Cell segmentation addresses an ambiguity in module-scale localization by making the repeated lattice and cell identity explicit. Within these workflows, domain knowledge is valuable when its role in the information chain is stated and evaluated.
+Across the two cases examined here, the evidence does not support the vague proposition that more domain knowledge is always better. The temperature-derived thermal channel addresses an ambiguity in ordinary image representation by exposing decoded radiometric information. Cell segmentation addresses an ambiguity in module-scale localization by making the repeated lattice and cell identity explicit. Within these workflows, domain knowledge is valuable when its role in the information chain is stated and evaluated.
 
 \subsection{Lesson 2: treat localization as an intermediate evidence object}
 

@@ -13,7 +13,7 @@ This file preserves durable conceptual and historical knowledge for Chapter 07. 
 
 - `main.tex` contains the complete first doctoral-quality Chapter 07 draft created under `CH07-001`.
 - `references.bib` is chapter-local and contains only keys cited or retained for this chapter.
-- `FIGURE_PLAN.md` records two original synthesis schematics that remain visible placeholders in the manuscript.
+- `FIGURE_PLAN.md` records two inserted original synthesis schematics and their provenance.
 - The current work is uncommitted pending user review and explicit Git authorization.
 
 ## Scope and role
@@ -79,7 +79,7 @@ CH07-001 created the first complete manuscript by synthesizing the final Chapter
 
 ## Open issues
 
-- Create and approve final artwork for `FIG-CH07-01` and `FIG-CH07-02` without changing their evidential role.
+- Review the inserted final artwork for `FIG-CH07-01` and `FIG-CH07-02` without changing their evidential role.
 - Resolve source-level unknowns only if authoritative evidence becomes available: thermal dataset lineage and electrical-string ground truth; EL evaluator, aggregation, grouping, association rule, and policy calibration; and runtime, human-use, and deployment evidence in both cases.
 - Validate compilation in an available LaTeX environment if the current environment cannot render the chapter.
 
@@ -91,3 +91,10 @@ No accepted decisions recorded yet.
 
 - `THESIS-001` — bootstrap chapter repository infrastructure.
 - `CH07-001` — complete first draft and final targeted academic hardening of cross-case synthesis and industrial validation (worktree state pending review and Git checkpoint).
+
+
+## Durable visual strategy
+
+Complete exactly the two established synthesis schematics. Keep the five exact/descriptive comparison tables; do not add maturity scores, a modality leaderboard, deployment ratings or a universal architecture.
+
+Assets are self-contained in `media/`, with offline reproducible generation scripts. Figure-level provenance and restrictions remain in `FIGURE_PLAN.md`; the control visual register holds cross-chapter status. User visual review and rendered chapter verification remain pending; static correctness does not establish final typeset layout.
